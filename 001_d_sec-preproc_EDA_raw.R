@@ -118,7 +118,6 @@ readcounts |>
 ## Prepariamo i dati
 pca_res <- prcomp(readcounts, scale. = TRUE)
 
-
 # Creaiamo un plot PCA con i dati grezzi
 tibble(Sample = rownames(pca_res$rotation),
        PC1 = pca_res$rotation[,1],
