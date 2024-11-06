@@ -1,0 +1,77 @@
+---
+params:
+  mycondition: infection
+  mynum: InfluenzaA
+  mydenom: NonInfected
+  mypval: 0.01
+  myfc: 0.8
+  mypadj: fdr
+---
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+source("_common.R")
+library(tidyverse)
+library(DESeq2) # BioC
+library(RColorBrewer)
+library(pheatmap)
+library(ggrepel)
+library(cowplot)
+library(DT)
+library(scales)
+library(vsn) # BioC
+library(apeglm) # BioC
+library(rmarkdown)
+library(gt)
+
+dds <- readRDS("data/DE.rds")
+res <- readRDS("data/res.rds")
+```
+
+# Shrinkage in DESeq2 {#sec-deg-shrinkage}
+
+Nell'analisi RNA-seq, lo shrinkage è una tecnica statistica che migliora l'interpretabilità e l'accuratezza dei risultati, soprattutto per i geni con bassa espressione o alta varianza. DESeq2 offre metodi di shrinkage sofisticati per i log2 fold change, che aiutano a ottenere stime più robuste e affidabili.
+
+## Visualizzazione dei dati con `plotMA()`
+
+Prima di applicare lo shrinkage, visualizziamo i risultati grezzi del test di Wald usando la funzione `plotMA()`.
+
+```{r}
+#| out-width: 100%
+# Crea un MA-plot
+plotMA(res)
+```
+
+Questo grafico mostra la relazione tra l'intensità media e il log2 fold change per ogni gene. I geni significativamente differenzialmente espressi sono colorati in blu.
+
+## Perché lo shrinkage è importante?
+
+* **Riduzione del rumore:** Lo shrinkage riduce l'impatto del rumore nelle stime dei log2 fold change, soprattutto per i geni con bassa espressione o alta varianza.
+* **Migliore interpretabilità:**  Senza shrinkage, i geni con bassa espressione possono mostrare log2 fold change molto grandi ma poco affidabili. Lo shrinkage modera questi effetti, rendendo i risultati più interpretabili.
+* **Maggiore accuratezza:** Lo shrinkage migliora l'accuratezza delle stime dei log2 fold change, riducendo il rischio di falsi positivi e falsi negativi.
+
+## Come funziona lo shrinkage in DESeq2?
+
+DESeq2 utilizza un metodo di shrinkage bayesiano che "restringe" le stime dei log2 fold change verso valori più probabili, basandosi sulla distribuzione a priori dei log2 fold change e sulla dispersione stimata per ciascun gene. I geni con bassa espressione o alta varianza vengono "shrunk" maggiormente verso zero, mentre i geni con alta espressione e bassa varianza vengono "shrunk" meno.
+
+## Applicazione dello shrinkage
+
+```{r}
+# Applica lo shrinkage con la funzione lfcShrink()
+resultsNames(dds)
+resShrink <- lfcShrink(dds, coef = "infection_NonInfected_vs_InfluenzaA", type = "apeglm")
+```
+
+In questo esempio, applichiamo lo shrinkage al coefficiente che rappresenta il confronto tra la condizione "trattato" e la condizione "controllo". Il metodo "apeglm" è un metodo di shrinkage accurato e veloce.
+
+## Visualizzazione dei dati dopo lo shrinkage
+
+```{r}
+#| out-width: 100%
+# Crea un MA-plot dopo lo shrinkage
+plotMA(resShrink)
+```
+
+Confrontando questo grafico con il precedente, si può osservare come lo shrinkage abbia moderato i log2 fold change, soprattutto per i geni con bassa espressione.

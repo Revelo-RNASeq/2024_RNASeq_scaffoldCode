@@ -1,0 +1,63 @@
+---
+params:
+  mycondition: infection
+  mynum: InfluenzaA
+  mydenom: NonInfected
+  mypval: 0.01
+  myfc: 0.8
+  mypadj: fdr
+---
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+source("_common.R")
+library(tidyverse)
+library(DESeq2) # BioC
+library(RColorBrewer)
+library(pheatmap)
+library(ggrepel)
+library(cowplot)
+library(DT)
+library(scales)
+library(vsn) # BioC
+library(apeglm) # BioC
+library(rmarkdown)
+library(gt)
+
+readcounts <- readRDS("data/readcounts.rds")
+coldata <- readRDS("data/coldata.rds")
+dds <- readRDS("data/dds_fitered.rds")
+vst <- readRDS("data/vst.rds")
+dds_esf <- readRDS("data/dss_esf.rds")
+dds_stat <- readRDS("data/dds_stat.rds")
+```
+
+# Testing {#sec-deg-test}
+
+Dopo aver normalizzato i dati e stimato i parametri del modello, DESeq2 applica test statistici per identificare i geni differenzialmente espressi tra le condizioni sperimentali.
+
+**Test di Wald**
+
+Il test statistico principale utilizzato da DESeq2 è il **test di Wald**. Questo test verifica l'ipotesi nulla che il log2 fold change di un gene tra due condizioni sia uguale a zero. In altre parole, il test verifica se c'è una differenza significativa nell'espressione del gene tra le condizioni.
+
+**Come funziona il test di Wald:**
+
+1.  **Stima del log2 fold change:** DESeq2 stima il log2 fold change per ogni gene, che rappresenta la differenza di espressione tra le condizioni.
+2.  **Calcolo della statistica del test:** DESeq2 calcola la statistica del test di Wald, che è il rapporto tra la stima del log2 fold change e il suo errore standard.
+3.  **Calcolo del p-value:** DESeq2 calcola il p-value, che rappresenta la probabilità di osservare un log2 fold change così estremo (o più estremo) se l'ipotesi nulla fosse vera.
+
+**Correzione per test multipli**
+
+Poiché vengono testati migliaia di geni contemporaneamente, è necessario correggere i p-value per il problema dei test multipli. DESeq2 utilizza come default il metodo di Benjamini-Hochberg per controllare il False Discovery Rate (FDR).
+
+**Interpretazione dei risultati**
+
+I geni con un p-value aggiustato (padj) inferiore a una soglia di significatività (ad esempio, 0.05) sono considerati differenzialmente espressi. Il log2 fold change indica la direzione e l'entità della differenza di espressione.
+
+```{r}
+ddsf <- nbinomWaldTest(dds_stat)
+
+```
+
