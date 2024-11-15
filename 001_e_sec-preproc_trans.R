@@ -12,6 +12,7 @@ library(apeglm) # BioC
 library(rmarkdown)
 library(gt)
 
+#' Importa i dati
 readcounts <- ___
 coldata <- ___
 dds <- ___

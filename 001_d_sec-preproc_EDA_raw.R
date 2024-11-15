@@ -1,12 +1,4 @@
 
-params:
-  mycondition: infection
-  mynum: InfluenzaA
-  mydenom: NonInfected
-  mypval: 0.01
-  myfc: 0.8
-  mypadj: fdr
-
 library(tidyverse)
 library(DESeq2) # BioC
 library(RColorBrewer)
@@ -20,6 +12,7 @@ library(apeglm) # BioC
 library(rmarkdown)
 library(gt)
 
+#' Importa i dati
 readcounts <- readRDS("___")
 coldata <- ___("___")
 dds <- ___

@@ -11,6 +11,7 @@ library(apeglm) # BioC
 library(rmarkdown)
 library(gt)
 
+#' Importa i dati
 readcounts <- ___
 coldata <- ___
 dds <- ___
@@ -39,38 +40,33 @@ pheatmap(___,
 
 
 
-@@@@@@@@@@@@@@@@@@@@ Arrivato qui
-
 ## PCA
 
-```{r}
-#| out-width: 100%
-pcaData <- DESeq2::plotPCA(vst, intgroup = c("infection"), ntop = 3000)
+pcaData <- DESeq2::plotPCA(___, intgroup = c("infection"), ntop = ___)
 pcaData2 <- pcaData$data
 
-pp <- ggplot(pcaData2, aes(x = PC1, y = PC2, text = name)) +
-  geom_point(aes(color = infection), size = 5) +
+pp <- ggplot(pcaData2, aes(x = ___, y = ___, text = name)) +
+  geom_point(size = 5) +
   theme_minimal() 
 
 plotly::ggplotly(pp)
-```
+
+#' Create lo stesso grafico ma colorando i punti sulla base dell'intgroup
+
 
 ## Esplorazioni interattiva dei dati
 
-```{r}
-## Convert DESeqDataSet object to a SingleCellExperiment object, in order to
-## be able to store the PCA representation
-# library(SingleCellExperiment)
-# sce <- as(dds, "SingleCellExperiment")
+library(SingleCellExperiment)
+sce <- as(dds, "SingleCellExperiment")
 
-# ## Add PCA to the 'reducedDim' slot
-# stopifnot(rownames(pcaData) == colnames(sce))
-# reducedDim(sce, "PCA") <- as.matrix(pcaData[, c("PC1", "PC2")])
+## Add PCA to the 'reducedDim' slot
+stopifnot(rownames(pcaData) == colnames(sce))
+reducedDim(sce, "PCA") <- as.matrix(pcaData[, c("PC1", "PC2")])
 
-# ## Add variance-stabilized data as a new assay
-# stopifnot(colnames(vst) == colnames(sce))
-# assay(sce, "vst") <- assay(vst)
+## Add variance-stabilized data as a new assay
+stopifnot(colnames(vst) == colnames(sce))
+assay(sce, "vst") <- assay(vst)
 
-# app <- iSEE::iSEE(sce)
-# shiny::runApp(app)
+app <- iSEE::iSEE(sce)
+shiny::runApp(app)
 ```
