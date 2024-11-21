@@ -1,61 +1,46 @@
 
 library(tidyverse)
 library(DESeq2) # BioC
-library(RColorBrewer)
-library(pheatmap)
-library(ggrepel)
-library(cowplot)
-library(DT)
-library(scales)
-library(vsn) # BioC
-library(apeglm) # BioC
-library(rmarkdown)
-library(gt)
 
 #' Importa i dati
-readcounts <- readRDS("___")
-coldata <- ___("___")
-dds <- ___
-
-
+readcounts <- readRDS("data/readcounts.rds")
+dds <- readRDS("data/dds_fitered.rds")
 
 # Creaiamo un boxplot per visualizzare la dimensione delle librerie
-## Prepariamo i dati
-## Dobbiamo trasformare i dati per poterli usare con ggplot2
-## ?pivot_longer
-tmp1 <- readcounts |> 
-  tibble() |> 
-  pivot_longer(cols = everything(),
-               names_to = "Sample",
-               values_to = "Reads") 
-
-tmp2 <- tmp1 |> 
-  ggplot(aes(Sample, Reads)) +
-  geom_boxplot()
-
-tmp2 +
-  labs(title = "RAW data",
-       y = "Number of reads") +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
-
-
-# Creaiamo un boxplot per visualizzare la dimensione delle librerie in scala logaritmica
-## Prepariamo i dati
-readcounts |> 
-  tibble() |> 
-  pivot_longer(___, ___, ___) |> 
-  ggplot(aes(___, ___)) +
-  geom_boxplot() +
-  ___() + # cerca la funziona per trasformare i dati in scala logasritmica
-  labs(title = "___",
-       y = "___") +
-  theme(axis.text.x = element_text(angle = ___, hjust = 1))
-
-
 # Combina i 2 grafici con il pacchetto patchwork (https://patchwork.data-imaginist.com/)
 library(patchwork)
-p1 <- ___
-p2 <- ___
+
+p1 <- readcounts |>
+  tibble() |>
+  pivot_longer(
+    cols = everything(),
+    names_to = "Sample",
+    values_to = "Reads"
+  ) |>
+  ggplot(aes(Sample, Reads)) +
+  geom_boxplot() +
+  labs(
+    title = "RAW data",
+    y = "Number of reads"
+  ) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+# Creaiamo un boxplot per visualizzare la dimensione delle librerie in scala logaritmica
+p2 <- readcounts |>
+  tibble() |>
+  pivot_longer(
+    cols = everything(),
+    names_to = "Sample",
+    values_to = "Reads"
+  ) |>
+  ggplot(aes(Sample, Reads)) +
+  geom_boxplot() +
+  scale_y_log10() +
+  labs(
+    title = "Data in log scale",
+    y = "Number of reads"
+  ) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 p1 + p2
 
@@ -81,29 +66,30 @@ ___
 ## Variabilità dell'espressione genica
 
 ### Scatterplot usando lo stesso
-readcounts |> 
+readcounts |>
   ggplot(aes(x = GSM2545336, y = GSM2545336)) +
-  geom_point()+
+  geom_point() +
   geom_abline(slope = 1) +
   labs(title = "Stesso campione")
 
-## Due campioni controllo
-readcounts |> 
-  ggplot(aes(x = ___, y = ___)) +
-  geom_point()+
+readcounts |>
+  ggplot(aes(x = GSM2545337, y = GSM2545338)) +
+  geom_point() +
   geom_abline(slope = 1) +
-  labs(title = "___")
+  labs(title = "Due campioni controllo")
 
-## Due campioni trattato
-p3 <- readcounts |> 
-  ggplot(___) +
-  geom_point()+
-  geom_abline(___) +
-  labs(title = "___")
+readcounts |>
+  ggplot(aes(x = GSM2545339, y = GSM2545341)) +
+  geom_point() +
+  geom_abline(slope = 1) +
+  labs(title = "Due campioni trattato")
 
-## Confronto tra un campione trattato e uno controllo
-readcounts |> 
-  ___
+readcounts |>
+  ggplot(aes(x = GSM2545338, y = GSM2545342)) +
+  geom_point() +
+  geom_abline(slope = 1) +
+  labs(title = "Confronto tra un campione trattato e uno controllo")
+
 
 
 ## Principal Component Analysis)
@@ -123,4 +109,28 @@ tibble(Sample = rownames(pca_res$rotation),
   scale_color_brewer(palette = "Set1")
 
 # Creaiamo un plot PCA con i dati grezzi comparando PC2/PC3, PC3/PC1
+tibble(
+  Sample = rownames(pca_res$rotation),
+  PC2 = pca_res$rotation[, 2],
+  PC3 = pca_res$rotation[, 3]
+) |>
+  left_join(coldata |> select(Sample = geo_accession, Group = infection)) |>
+  ggplot(aes(x = PC2, y = PC3, color = Group)) +
+  geom_point(size = 3) +
+  ggtitle("PCA on Raw Counts") +
+  theme_bw() +
+  scale_color_brewer(palette = "Set1")
+
+tibble(
+  Sample = rownames(pca_res$rotation),
+  PC3 = pca_res$rotation[, 3],
+  PC4 = pca_res$rotation[, 4]
+) |>
+  left_join(coldata |> select(Sample = geo_accession, Group = infection)) |>
+  ggplot(aes(x = PC3, y = PC4, color = Group)) +
+  geom_point(size = 3) +
+  ggtitle("PCA on Raw Counts") +
+  theme_bw() +
+  scale_color_brewer(palette = "Set1")
+
 
