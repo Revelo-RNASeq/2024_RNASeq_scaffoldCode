@@ -28,6 +28,7 @@ ddsf <- DESeq(___)
 # mypval:0.01
 # myfc:0.8
 # mypadj:fdr
+# mycondition:infection
 
 #' Esportiamo i risultati
 res <- results(ddsf, 
