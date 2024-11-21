@@ -29,8 +29,8 @@ dds <- dds[rowSums(counts(dds)) > ___, ]
 # Prova a rimuovere i geni con meno di 10, 50 o 100 conte
 tmp <- dds[rowSums(counts(dds)) > ___, ]
 
-# Creiamo una tabella dei campioni: 25 osservazioni (geni) e 4 variabili (individui).'
-datatable(counts(dds)[___:___, ___:___],
+# Creiamo una tabella dei campioni: 25 osservazioni (geni) 
+datatable(counts(dds)[___:___, ],
   options = list(
     pageLength = 5,
     autoWidth = TRUE,

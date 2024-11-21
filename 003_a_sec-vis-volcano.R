@@ -1,21 +1,8 @@
 library(tidyverse)
-library(DESeq2) # BioC
-library(RColorBrewer)
-library(pheatmap)
-library(ggrepel)
-library(cowplot)
-library(DT)
-library(scales)
-library(vsn) # BioC
-library(apeglm) # BioC
-library(rmarkdown)
-library(gt)
 
 #' Importiamo i dati
 dds <- ___
 res <- ___
-
-#' In aggiunta puoi importare i dati creati con i diversi parametri dallo script precedente
 
 # Volcano plot
 
@@ -26,13 +13,14 @@ pv <- ___
 
 #' Crea una tabella tibble e assegna dei colori ai geni up/down regolati
 out_res <- tibble(
-  gene = ___,
-  baseMean = ___,
-  log2FoldChange = ___,
-  lfcSE = ___,
-  pvalue = ___,
-  padj = ___
-) |>
+  gene = res@rownames,
+  baseMean = res@listData$baseMean,
+  log2FoldChange = res@listData$log2FoldChange,
+  lfcSE = res@listData$lfcSE,
+  # stat = res@listData$stat,
+  pvalue = res@listData$pvalue,
+  padj = res@listData$padj
+)  |>
   mutate(colore = case_when(
     log2FoldChange > FC & padj < pv ~ "___", # scegli il colore che preferisci per gli up regolati
     log2FoldChange < -FC & padj < pv ~ "___", # scegli il colore che preferisci per i down regolati

@@ -13,4 +13,3 @@ coldata <- coldata_all[datanames,]
 # Salviamo i dati
 saveRDS(___, "data/readcounts.rds")
 saveRDS(___, ___)
-```

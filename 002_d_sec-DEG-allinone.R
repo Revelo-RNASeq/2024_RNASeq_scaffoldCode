@@ -12,10 +12,7 @@ library(rmarkdown)
 library(gt)
 
 #' Importa i dati
-readcounts <- ___
-coldata <- ___
 dds <- ___
-vst <- ___
 
 # All in one
 #' Analisi DESeq
@@ -65,8 +62,3 @@ datatable(___,
     filter = "top"
   ), rownames = TRUE
 )
-
-#' Proviamo a cambiare i parametri iniziali e vedere i risultiti che otteniamo
-
-
-#' Salviamo i risultati creati con i diversi parametri 
