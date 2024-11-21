@@ -1,15 +1,24 @@
-# Importiamo il file chiamato GSE96870_counts_cerebellum.csv 
-readcounts <- read.csv("", row.names = 1)
-# Dal manuale cerca di capire cosa fa la l'opzione "row.names"
+library(tidyverse)
 
-datanames <- colnames(readcounts)
+# Importiamo il file chiamato GSE96870_counts.csv 
+readcounts_all <- read.csv("data/GSE96870_counts.csv", row.names = 1)
 
 # Importiamo il file chiamato GSE96870_coldata_all.csv
+coldata_all <- read.csv("data/GSE96870_coldata_all.csv", row.names =1 )
 
-coldata_all <- read.csv("", ___)
+# Dal manuale cerca di capire cosa fa la l'opzione "row.names"
 
-coldata <- coldata_all[datanames,]
+# Selezioniamo solo i campioni provenienti dal Cerebellum
+coldata <- coldata_all |> 
+  filter(tissue == "Cerebellum")
+
+# Creaiamo un vettore che contenga i nomi dei campioni Cerebellum
+datanames <- coldata |> 
+  rownames()
+
+# Createmo un dataset che contenga le conte per i campioni Cerebellum
+readcounts <- readcounts_all[, datanames]
 
 # Salviamo i dati
-saveRDS(___, "data/readcounts.rds")
-saveRDS(___, ___)
+saveRDS(readcounts, "data/readcounts.rds")
+saveRDS(coldata, "data/coldata.rds")
