@@ -1,36 +1,29 @@
 # Carica le librerie
-___(DESeq2)
-___(DT)
+library(DESeq2)
+library(DT)
 
 # Se non sono presenti nel tuo PC installale
 # Cerca su internet come fare
 
 # Importiamo i dati
-readcounts <- readRDS("___")
-coldata <- ___("___")
+readcounts <- readRDS("data/readcounts.rds")
+coldata <- readRDS("data/coldata.rds")
 
 # Creiamo un DESeqDataSet
 dds <- DESeqDataSetFromMatrix(
-  countData = ___,
-  colData = ___,
+  countData = readcounts,
+  colData = coldata,
   design = ~infection
 )
 
-# Prova a creare un DESeqDataSet con un desing diverso
-DESeqDataSetFromMatrix(
-  countData = ___,
-  colData = ___,
-  design = ~___
-)
-
 # Rimuovi i geni con meno di 5 conte
-dds <- dds[rowSums(counts(dds)) > ___, ]
+dds <- dds[rowSums(counts(dds)) > 5, ]
 
 # Prova a rimuovere i geni con meno di 10, 50 o 100 conte
-tmp <- dds[rowSums(counts(dds)) > ___, ]
+tmp <- dds[rowSums(counts(dds)) > 50, ]
 
 # Creiamo una tabella dei campioni: 25 osservazioni (geni) 
-datatable(counts(dds)[___:___, ],
+datatable(counts(dds)[1:25, ],
   options = list(
     pageLength = 5,
     autoWidth = TRUE,
@@ -40,4 +33,4 @@ datatable(counts(dds)[___:___, ],
 )
 
 # Salva il dataset
-___(dds, "___/dds_fitered.rds")
+saveRDS(dds, "data/dds_fitered.rds")
